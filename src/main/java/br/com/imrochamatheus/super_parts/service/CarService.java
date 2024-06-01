@@ -8,6 +8,10 @@ import br.com.imrochamatheus.super_parts.mapper.CarMapper;
 import lombok.NoArgsConstructor;
 import br.com.imrochamatheus.super_parts.model.Car;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import br.com.imrochamatheus.super_parts.repository.CarRepository;
 
@@ -28,9 +32,17 @@ public class CarService {
         return this.carRepository.findTopKProducers();
     }
 
-    public List<CarDto> findAll () {
+    public List<CarDto> getAll () {
         return this.carRepository.findAll()
                 .stream().map(this.carMapper::fromCar).toList();
+    }
+
+    public Page<CarDto> getAllPaged(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Car> carPage = this.carRepository.findAll(pageable);
+        List<CarDto> content = carPage.stream().map(this.carMapper::fromCar).toList();
+
+        return new PageImpl<>(content, carPage.getPageable(), carPage.getTotalElements());
     }
 
     public CarDto findById (Long id) {

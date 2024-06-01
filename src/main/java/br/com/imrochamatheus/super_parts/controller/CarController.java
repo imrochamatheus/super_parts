@@ -5,6 +5,7 @@ import br.com.imrochamatheus.super_parts.dto.TopKProducersDto;
 import br.com.imrochamatheus.super_parts.validation.OnUpdateCar;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,13 @@ public class CarController {
 
     @GetMapping()
     public ResponseEntity<List<CarDto>> getAll () {
-        List<CarDto> response = this.carService.findAll();
+        List<CarDto> response = this.carService.getAll();
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/paged")
+    public ResponseEntity<Page<CarDto>> getAllPaged(@RequestParam int page, @RequestParam int size) {
+        Page<CarDto> response = this.carService.getAllPaged(page, size);
         return ResponseEntity.ok(response);
     }
 
