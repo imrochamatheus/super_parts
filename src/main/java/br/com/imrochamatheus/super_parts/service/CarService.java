@@ -2,6 +2,7 @@ package br.com.imrochamatheus.super_parts.service;
 
 import br.com.imrochamatheus.super_parts.dto.CarDto;
 import br.com.imrochamatheus.super_parts.exceptions.CarAlreadyExistsException;
+import br.com.imrochamatheus.super_parts.exceptions.CarNotFoundException;
 import br.com.imrochamatheus.super_parts.mapper.CarMapper;
 import lombok.NoArgsConstructor;
 import br.com.imrochamatheus.super_parts.model.Car;
@@ -25,6 +26,13 @@ public class CarService {
     public List<CarDto> findAll () {
         return this.carRepository.findAll()
                 .stream().map(this.carMapper::fromCar).toList();
+    }
+
+    public CarDto findById (Long id) {
+        Car car =  this.carRepository.findById(id)
+                .orElseThrow(() -> new CarNotFoundException("Car with id " + id + " does not exists"));
+
+        return this.carMapper.fromCar(car);
     }
 
     public CarDto saveCar (CarDto carRequest) {
