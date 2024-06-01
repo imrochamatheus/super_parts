@@ -1,12 +1,13 @@
 package br.com.imrochamatheus.super_parts.utils;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import org.springframework.http.HttpStatus;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 public class ErrorResponse {
-    private HttpStatus statusCode;
+    private int statusCode;
     private String message;
 }
