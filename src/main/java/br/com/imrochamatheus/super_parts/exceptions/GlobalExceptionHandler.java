@@ -14,7 +14,7 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     private ResponseEntity<ErrorResponse> buildErrorResponse(HttpStatus status, String message) {
-        ErrorResponse errorResponse = new ErrorResponse(status, message);
+        ErrorResponse errorResponse = new ErrorResponse(status.value(), message);
         return ResponseEntity.status(status).body(errorResponse);
     }
 
