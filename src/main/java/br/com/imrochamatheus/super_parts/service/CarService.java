@@ -1,6 +1,7 @@
 package br.com.imrochamatheus.super_parts.service;
 
 import br.com.imrochamatheus.super_parts.dto.CarDto;
+import br.com.imrochamatheus.super_parts.dto.TopKProducersDto;
 import br.com.imrochamatheus.super_parts.exceptions.CarAlreadyExistsException;
 import br.com.imrochamatheus.super_parts.exceptions.CarNotFoundException;
 import br.com.imrochamatheus.super_parts.mapper.CarMapper;
@@ -23,6 +24,10 @@ public class CarService {
     @Autowired
     private CarMapper carMapper;
 
+    public List<TopKProducersDto> findTopKProducers () {
+        return this.carRepository.findTopKProducers();
+    }
+
     public List<CarDto> findAll () {
         return this.carRepository.findAll()
                 .stream().map(this.carMapper::fromCar).toList();
@@ -36,18 +41,30 @@ public class CarService {
     }
 
     public CarDto saveCar (CarDto carRequest) {
-        Optional<Car> carExists = this.carRepository.findByModelOrCode(
-                carRequest.getModel(),
-                carRequest.getCode()
-        );
+        Optional<Car> carExists = this.carRepository
+                .findFirstByModelOrCode(carRequest.getModel(), carRequest.getCode());
 
         if(carExists.isPresent()) {
             throw new CarAlreadyExistsException("There is already a car with specified code or model");
         }
 
-        Car newCar = this.carMapper.toCar(carRequest);
-        Car createdCar = this.carRepository.save(newCar);
+        Car newCar = this.carRepository.save(this.carMapper.toCar(carRequest));
+        return this.carMapper.fromCar(newCar);
+    }
 
-        return this.carMapper.fromCar(createdCar);
+    public CarDto updateCar(CarDto carRequest) {
+        Car carToUpdate = this.carRepository
+                .findById(carRequest.getId())
+                .orElseThrow(() -> new CarNotFoundException("Car with id " + carRequest.getId() + " does not exists"));
+
+        Car carAlreadyExists =  this.carRepository
+                .findFirstByModelOrCode(carRequest.getModel(), carRequest.getCode()).orElse(null);
+
+        if(carAlreadyExists != null && carAlreadyExists.getId() != carToUpdate.getId()) {
+            throw new CarAlreadyExistsException("There is already a car with specified code or model");
+        }
+
+        Car updatedCar = this.carRepository.save(this.carMapper.toCar(carRequest));
+        return this.carMapper.fromCar(updatedCar);
     }
 }
