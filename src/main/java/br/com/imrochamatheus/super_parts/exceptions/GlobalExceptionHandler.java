@@ -42,4 +42,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(errors);
     }
+
+    @ExceptionHandler({PartNotFoundException.class})
+    public ResponseEntity<ErrorResponse> handlePartNotFoundException (PartNotFoundException exception) {
+        return this.buildErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage());
+    }
 }
