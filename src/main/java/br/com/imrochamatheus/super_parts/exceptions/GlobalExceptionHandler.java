@@ -47,4 +47,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handlePartNotFoundException (PartNotFoundException exception) {
         return this.buildErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage());
     }
+
+    @ExceptionHandler({PartAlreadyExistsException.class})
+    public ResponseEntity<ErrorResponse> handlePartAlreadyExistsException(PartAlreadyExistsException exception) {
+        return this.buildErrorResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
 }
