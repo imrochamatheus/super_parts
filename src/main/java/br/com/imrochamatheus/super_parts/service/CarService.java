@@ -2,14 +2,14 @@ package br.com.imrochamatheus.super_parts.service;
 
 import br.com.imrochamatheus.super_parts.dto.CarDto;
 import br.com.imrochamatheus.super_parts.dto.TopKProducersDto;
+import br.com.imrochamatheus.super_parts.dto.projection.CarProducerProjection;
 import br.com.imrochamatheus.super_parts.exceptions.CarAlreadyExistsException;
 import br.com.imrochamatheus.super_parts.exceptions.CarNotFoundException;
-import br.com.imrochamatheus.super_parts.mapper.CarMapper;
+import br.com.imrochamatheus.super_parts.model.mapper.CarMapper;
 import lombok.NoArgsConstructor;
 import br.com.imrochamatheus.super_parts.model.Car;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -32,20 +32,29 @@ public class CarService {
         return this.carRepository.findTopKProducers();
     }
 
-    public List<CarDto> getAll () {
+    public List<CarDto> findAllCars () {
         return this.carRepository.findAll()
                 .stream().map(this.carMapper::fromCar).toList();
     }
 
-    public Page<CarDto> getAllPaged(int page, int size) {
+    public Page<CarDto> findAllCarsPaged(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Car> carPage = this.carRepository.findAll(pageable);
-        List<CarDto> content = carPage.stream().map(this.carMapper::fromCar).toList();
-
-        return new PageImpl<>(content, carPage.getPageable(), carPage.getTotalElements());
+        return this.carRepository.findAll(pageable).map(this.carMapper::fromCar);
     }
 
-    public CarDto findById (Long id) {
+    public Page<CarDto> findAllCarsPagedByTherm(String therm, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        return this.carRepository
+                .findByModelIsContainingOrProducerIsContaining(therm, therm, pageable)
+                .map(this.carMapper::fromCar);
+    }
+
+    public List<CarProducerProjection> findAllProducers() {
+       return this.carRepository.findAllProducers();
+    }
+
+    public CarDto findCarById (Long id) {
         Car car =  this.carRepository.findById(id)
                 .orElseThrow(() -> new CarNotFoundException("Car with id " + id + " does not exists"));
 
@@ -78,5 +87,11 @@ public class CarService {
 
         Car updatedCar = this.carRepository.save(this.carMapper.toCar(carRequest));
         return this.carMapper.fromCar(updatedCar);
+    }
+
+    public void deleteCar (Long id) {
+        this.carRepository.findById(id)
+                .orElseThrow(() -> new CarNotFoundException("Car with id " + id + " does not exists"));
+        this.carRepository.deleteById(id);
     }
 }

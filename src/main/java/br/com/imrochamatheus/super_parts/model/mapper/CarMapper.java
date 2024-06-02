@@ -1,4 +1,4 @@
-package br.com.imrochamatheus.super_parts.mapper;
+package br.com.imrochamatheus.super_parts.model.mapper;
 
 import br.com.imrochamatheus.super_parts.dto.CarDto;
 import br.com.imrochamatheus.super_parts.model.Car;
