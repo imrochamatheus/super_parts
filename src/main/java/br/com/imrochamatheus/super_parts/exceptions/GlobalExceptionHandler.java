@@ -28,6 +28,11 @@ public class GlobalExceptionHandler {
         return this.buildErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
+    @ExceptionHandler({CarHavePartsException.class})
+    public ResponseEntity<ErrorResponse> handleCarHavePartsException(CarHavePartsException exception) {
+        return this.buildErrorResponse(HttpStatus.CONFLICT, exception.getMessage());
+    }
+
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity<Object> handleMethodNotValidException (MethodArgumentNotValidException exception) {
         Map<String, String> errors = new HashMap<>();

@@ -55,6 +55,13 @@ public class PartService {
         return this.partMapper.fromModel(part);
     }
 
+    public List<PartDto> findPartByCarId (Long id) {
+        return this.partRepository
+                .findByCarId(id)
+                .stream()
+                .map(this.partMapper::fromModel).toList();
+    }
+
     public List<TopKCarsMostPartsDto> findTopKCarsMostParts () {
         return this.partRepository.findTopKCarsMostParts();
     }

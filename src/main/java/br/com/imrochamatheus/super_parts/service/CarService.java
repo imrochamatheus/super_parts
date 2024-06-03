@@ -1,9 +1,11 @@
 package br.com.imrochamatheus.super_parts.service;
 
 import br.com.imrochamatheus.super_parts.dto.CarDto;
+import br.com.imrochamatheus.super_parts.dto.PartDto;
 import br.com.imrochamatheus.super_parts.dto.TopKProducersDto;
 import br.com.imrochamatheus.super_parts.dto.projection.CarProducerProjection;
 import br.com.imrochamatheus.super_parts.exceptions.CarAlreadyExistsException;
+import br.com.imrochamatheus.super_parts.exceptions.CarHavePartsException;
 import br.com.imrochamatheus.super_parts.exceptions.CarNotFoundException;
 import br.com.imrochamatheus.super_parts.model.mapper.CarMapper;
 import lombok.NoArgsConstructor;
@@ -27,6 +29,9 @@ public class CarService {
 
     @Autowired
     private CarMapper carMapper;
+
+    @Autowired
+    private PartService partService;
 
     public List<TopKProducersDto> findTopKProducers () {
         return this.carRepository.findTopKProducers();
@@ -92,6 +97,15 @@ public class CarService {
     public void deleteCar (Long id) {
         this.carRepository.findById(id)
                 .orElseThrow(() -> new CarNotFoundException("Car with id " + id + " does not exists"));
+
+        List<PartDto> carPartsList = this.partService.findPartByCarId(id);
+        if (!carPartsList.isEmpty()) {
+            throw new CarHavePartsException(
+                    "Car cannot be deleted as it has " +
+                    carPartsList.size() +
+                    " associated parts");
+        }
+
         this.carRepository.deleteById(id);
     }
 }

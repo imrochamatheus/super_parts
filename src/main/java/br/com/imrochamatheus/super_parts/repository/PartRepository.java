@@ -18,6 +18,8 @@ public interface PartRepository extends JpaRepository<Part, Long> {
 
     Page<Part> findByNameIsContainingOrSerialIsContaining(String name, String serial, Pageable pageable);
 
+    List<Part> findByCarId (Long CarId);
+
     @Query(value = "SELECT new br.com.imrochamatheus.super_parts.dto.TopKCarsMostPartsDto(p.carModel, COUNT(p) partsQuantity)" +
             " FROM Part p" +
             " GROUP BY carModel" +
