@@ -47,7 +47,10 @@ public class CarController {
     }
 
     @GetMapping("/paged")
-    public ResponseEntity<Page<CarDto>> findAllPaged(@RequestParam int page, @RequestParam int size) {
+    public ResponseEntity<Page<CarDto>> findAllPaged(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
         Page<CarDto> response = this.carService.findAllCarsPaged(page, size);
         return ResponseEntity.ok(response);
     }
@@ -55,8 +58,8 @@ public class CarController {
     @GetMapping("/paged/{therm}")
     public ResponseEntity<Page<CarDto>> findAllPaged(
             @PathVariable String therm,
-            @RequestParam int page,
-            @RequestParam int size
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
     ){
         Page<CarDto> response = this.carService.findAllCarsPagedByTherm(therm, page, size);
         return ResponseEntity.ok(response);
