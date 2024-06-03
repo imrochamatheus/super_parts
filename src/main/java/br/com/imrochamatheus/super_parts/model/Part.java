@@ -7,8 +7,9 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Setter
-@Entity(name = "Pecas")
+@Entity
 @NoArgsConstructor
+@Table(name = "Pecas")
 public class Part {
 
     @Id
