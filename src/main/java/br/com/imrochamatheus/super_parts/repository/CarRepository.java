@@ -25,7 +25,8 @@ public interface CarRepository extends JpaRepository<Car, Long> {
     @Query(value = "SELECT new br.com.imrochamatheus.super_parts.dto.TopKProducersDto(c.producer, COUNT(c) quantity)"+
             " FROM Car c" +
             " GROUP BY producer" +
-            " ORDER BY quantity DESC")
+            " ORDER BY quantity DESC" +
+            " LIMIT 10")
     List<TopKProducersDto> findTopKProducers();
 
 }
